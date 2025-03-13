@@ -1,0 +1,26 @@
+#Dossiers de build (fichiers compilés)
+Debug/
+Release/
+build/
+
+#Fichiers de l'IDE
+*.launch
+*.swp
+*.bak
+*.tmp
+*.log
+*.dep
+*.elf
+*.map
+*.bin
+*.hex
+*.lst
+*.o
+*.d
+*.su
+
+#Bibliothèques externes
+Middlewares/
+
+#Fichiers générés par CubeMX
+MXProjectConfig/

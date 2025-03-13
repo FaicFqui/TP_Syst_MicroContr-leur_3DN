@@ -18,7 +18,14 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <unistd.h>  // Pour la fonction _write
 
+extern UART_HandleTypeDef huart2;  // Déclare l'instance USART générée par CubeMX
+
+int _write(int file, char *ptr, int len) {
+    HAL_UART_Transmit(&huart2, (uint8_t *)ptr, len, HAL_MAX_DELAY);  // Envoyer les données via USART
+    return len;  // Retourne le nombre de caractères écrits
+}
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -96,12 +103,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  char msg[] = "Hello, STM32 USART2 Test!\r\n";
-      USART2_SendData(msg);  // Envoie un message
+  //char msg[] = "Hello, STM32 USART2 Test!\r\n";
+  //USART2_SendData(msg);  // Envoie un message
+      printf("Bonjour, STM32!\r\n");  // Envoyer un message via USART
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  printf("Counter: %d\r\n", HAL_GetTick());  // Afficher le temps écoulé
+	  HAL_Delay(1000);  // Attendre 1 seconde
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

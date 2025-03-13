@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0000500c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000a1fa  00000000  00000000  0000503c  2**0
+ 12 .debug_info   0000a240  00000000  00000000  0000503c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000177c  00000000  00000000  0000f236  2**0
+ 13 .debug_abbrev 0000179f  00000000  00000000  0000f27c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 000008b0  00000000  00000000  000109b8  2**3
+ 14 .debug_aranges 000008b8  00000000  00000000  00010a20  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 000006a7  00000000  00000000  00011268  2**0
+ 15 .debug_rnglists 000006ad  00000000  00000000  000112d8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00024c4d  00000000  00000000  0001190f  2**0
+ 16 .debug_macro  000259df  00000000  00000000  00011985  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000a6be  00000000  00000000  0003655c  2**0
+ 17 .debug_line   0000a88f  00000000  00000000  00037364  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000e3beb  00000000  00000000  00040c1a  2**0
+ 18 .debug_str    000e6e8c  00000000  00000000  00041bf3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  00124805  2**0
+ 19 .comment      00000043  00000000  00000000  00128a7f  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000022bc  00000000  00000000  00124848  2**2
+ 20 .debug_frame  000022e0  00000000  00000000  00128ac4  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000050  00000000  00000000  00126b04  2**0
+ 21 .debug_line_str 00000050  00000000  00000000  0012ada4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -399,10 +399,11 @@ int main(void)
  80004e6:	c40f      	stmia	r4!, {r0, r1, r2, r3}
  80004e8:	e895 0007 	ldmia.w	r5, {r0, r1, r2}
  80004ec:	e884 0007 	stmia.w	r4, {r0, r1, r2}
-      USART2_SendData(msg);  // Envoie un message
+   USART2_SendData(msg);  // Envoie un message
  80004f0:	1d3b      	adds	r3, r7, #4
  80004f2:	4618      	mov	r0, r3
  80004f4:	f000 f886 	bl	8000604 <USART2_SendData>
+      //printf("Bonjour, STM32!\r\n");  // Envoyer un message via USART
   while (1)
  80004f8:	bf00      	nop
  80004fa:	e7fd      	b.n	80004f8 <main+0x30>

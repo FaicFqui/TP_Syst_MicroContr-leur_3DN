@@ -1,0 +1,19 @@
+#ifndef DRIVER_LED_H
+#define DRIVER_LED_H
+
+#include "main.h"
+
+// Définitions des registres du MCP23S17
+#define MCP23S17_ADDRESS  0x40 // À adapter si besoin (0x40 = 0b01000000)
+#define MCP23S17_IOCON    0x0A
+#define MCP23S17_IODIRA   0x00
+#define MCP23S17_IODIRB   0x01
+#define MCP23S17_GPIOA    0x12
+#define MCP23S17_GPIOB    0x13
+
+void LED_Driver_Init(void);
+void LED_SetGPIOA(uint8_t value);
+void LED_SetGPIOB(uint8_t value);
+void LED_SetPin(uint8_t pinNumber, GPIO_PinState state); // 0-15 : A0-A7, B0-B7
+
+#endif // DRIVER_LED_H

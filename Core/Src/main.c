@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include "driver_led.h"
+#include "sgtl5000.h"
 
 extern SPI_HandleTypeDef hspi3;  // SPI3
 
@@ -39,6 +40,10 @@ SPI_HandleTypeDef hspi3;
 
 UART_HandleTypeDef huart2;
 
+
+#define TRIANGLE_RESOLUTION 100  // Nombre d’échantillons pour une période
+#define TRIANGLE_AMPLITUDE  30000 // Amplitude max du signal (max 32767 pour 16 bits signé)
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
@@ -52,9 +57,43 @@ static void MX_SAI2_Init(void);
 
 
 /* Private user code ---------------------------------------------------------*/
+int16_t triangleWave[TRIANGLE_RESOLUTION]; // Stéréo : Gauche/Droite
+int16_t txBuffer[TRIANGLE_RESOLUTION * 2]; // Réception DMA stéréo
 
 
-int __io_putchar(int chr) // redirection de fprint de flux sortant stdout vers usart
+
+/*void Generate_TriangleWave(void) {
+    for (int i = 0; i < TRIANGLE_RESOLUTION / 2; i++) {
+        triangleWave[i] = (int16_t)((2 * TRIANGLE_AMPLITUDE * i) / (TRIANGLE_RESOLUTION / 2) - TRIANGLE_AMPLITUDE);
+    }
+    for (int i = TRIANGLE_RESOLUTION / 2; i < TRIANGLE_RESOLUTION; i++) {
+        triangleWave[i] = (int16_t)((-2 * TRIANGLE_AMPLITUDE * (i - TRIANGLE_RESOLUTION / 2)) / (TRIANGLE_RESOLUTION / 2) + TRIANGLE_AMPLITUDE);
+    }
+
+    // Stéréo : Copie chaque échantillon pour les deux canaux (gauche/droite)
+    for (int i = 0; i < TRIANGLE_RESOLUTION; i++) {
+        txBuffer[2*i] = (uint16_t)triangleWave[i];      // Canal gauche
+        txBuffer[2*i + 1] = (uint16_t)triangleWave[i];  // Canal droit
+    }
+}*/
+void Generate_TriangleWave(void) {
+    for (int i = 0; i < TRIANGLE_RESOLUTION; i++) {
+        int16_t value;
+
+        if (i < TRIANGLE_RESOLUTION / 2)
+            value = (2 * TRIANGLE_AMPLITUDE * i) / (TRIANGLE_RESOLUTION / 2) - TRIANGLE_AMPLITUDE;
+        else
+            value = (-2 * TRIANGLE_AMPLITUDE * (i - TRIANGLE_RESOLUTION / 2)) / (TRIANGLE_RESOLUTION / 2) + TRIANGLE_AMPLITUDE;
+
+        // Stéréo : Gauche = Droite
+        txBuffer[2*i]     = (uint16_t)value;
+        txBuffer[2*i + 1] = (uint16_t)value;
+    }
+}
+
+
+
+int __io_putchar(int chr) // redirection de printf de flux sortant stdout vers usart
 {
 	HAL_UART_Transmit(&huart2, (uint8_t*)&chr, 1, HAL_MAX_DELAY);
 	return chr;
@@ -73,7 +112,7 @@ void USART2_SendString(const char *str) {
 }
 
 
-#define I2C_ADDR_CODEC   0x14  // Adresse I2C du CODEC
+#define I2C_ADDR_CODEC   0x14  // Adresse I2C du CODEC écriture (0x0A << 1 | 0)
 #define REG_CHIP_ID      0x0000 // Adresse du registre CHIP_ID
 
 extern I2C_HandleTypeDef hi2c2; // Assurez-vous que votre handle I2C est défini
@@ -154,6 +193,17 @@ int main(void)
 
 	// Éteindre la LED B3
 	//LED_SetPin(11, GPIO_PIN_SET);
+	sgtl5000_i2c = &hi2c2;
+
+	SGTL5000_Init();
+
+	Generate_TriangleWave();  // Génère le signal une fois
+
+
+
+	// Lancer émission via DMA (SAI A → SGTL5000)
+	HAL_Delay(10);
+	HAL_SAI_Transmit_DMA(&hsai_BlockA2, (uint8_t*)txBuffer, TRIANGLE_RESOLUTION * 2 * sizeof(int16_t));
 
 
 	while (1)
@@ -162,7 +212,7 @@ int main(void)
 		/* USER CODE END WHILE */
 
 		// test chennilard depuis driver_led OK
-		Chenillard();
+		//Chenillard();
 
 		/*LED_SetGPIOB(0x00); // All ON
 		HAL_Delay(500);

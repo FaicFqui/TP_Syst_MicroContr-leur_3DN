@@ -27,6 +27,10 @@ Développemnt d'un driver pour les leds du GPIO Expander MCP23S17 :
 4/Configuration du CODEC par l’I2C
 4.1/ // Lecture de 2 octets depuis le registre CHIP_ID : résultat affichage "CHIP_ID: 0xA011"
 
+MCLK=12.27 MHz
+LRCLK = 47.9 KHz
+FRq DIN 210KHz
+
 
 
 

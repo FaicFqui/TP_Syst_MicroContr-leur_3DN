@@ -31,6 +31,18 @@ MCLK=12.27 MHz
 LRCLK = 47.9 KHz
 FRq DIN 210KHz
 
+5/Dirver pour le codec SGTL500
+sgtl5000.h : 3 fonctions publiques
+	void SGTL5000_Init(void)
+	void SGTL5000_WriteRegister(uint16_t reg, uint16_t val)
+	uint16_t SGTL5000_ReadRegister(uint16_t reg) : pour débugage 
 
+sgtl5000.c	
+
+Génération du signal triangulaire se fait dans le main : void Generate_TriangleWave(void)
+Mesures avec oscilloscope :
+MCLK=12.27 MHz
+LRCLK = 47.9 KHz
+FRq DIN 210KHz
 
 
